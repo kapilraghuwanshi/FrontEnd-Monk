@@ -1,34 +1,21 @@
-import { useEffect, useState } from "react"
 
-export default function ProgressBar({ isEmpty, onCompleted }) {
+export default function ProgressBar({ completionStatus = 0 }) {
+    const MIN = 0;
+    const MAX = 100;
 
-    // width vs translateX vs ScaleX
-
-    // render phases - layout(reflow), paint, composite, animation 
-
-    const [animationProgress, setAnimationprogress] = useState(0);
-
-    useEffect(() => {
-        // setTimeout(() => setAnimationprogress(100));
-        if (!isEmpty) {
-            setAnimationprogress(100);
-        }
-    }, [isEmpty])
-    // isEmpty change will re trigger the useEffect
+    // handle negative and >100 values
+    const clampedValue = Math.min(Math.max(completionStatus, MIN), MAX);
 
     return (
         <div className="bar">
             <div className="progress-bar"
-                style={{
-                    // width: animationProgress + "%"
-                    // transform: `translateX(${animationProgress-100}%)`
-                    transform: `scaleX(${animationProgress / 100})`,
-                    transformOrigin: 'left'
-                }}
-                onTransitionEnd={() => {
-                    onCompleted();
-                }}>
+                style={{ width: clampedValue + '%' }}
+                role="progressbar"
+                aria-valuenow={clampedValue}
+                aria-valuemin={MIN}
+                aria-valuemax={MAX}>
+                {clampedValue ? clampedValue + "%" : ""}
             </div>
         </div>
-    )
+    );
 }

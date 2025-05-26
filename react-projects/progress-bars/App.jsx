@@ -25,32 +25,20 @@ import ProgressBar from './ProgressBar'
 // Add: Appends a new progress bar to the bottom of the list.
 // Reset: Resets to the initial state where there is only one empty bar and stops any 
 // running animation
-const CONCURRENCY_LIMIT = 3;
 
 export default function App() {
-  const [countProgressBars, setCountProgressBars] = useState(0);
-  const [numFilledBars, setNumFilledBars] = useState(0);
-
-  const addProgressBars = () => {
-    setCountProgressBars((prevCount) => prevCount + 1);
-  }
 
   return (
     <div>
       <h1>Progress Bars</h1>
-      <button onClick={() => addProgressBars()}>Add</button>
-      <div>
-        {Array(countProgressBars)
-          .fill(null)
-          .map((value, idx) =>
-            <ProgressBar
-              key={idx}
-              isEmpty={idx >= numFilledBars + CONCURRENCY_LIMIT} // true - do not animate since it's empty 
-              onCompleted={() => { 
-                setNumFilledBars(numFilledBars + 1) 
-              }} /> // increment once animation is completed for earlier one
-          )}
-      </div>
+      <ProgressBar />
+      <ProgressBar completionStatus={25}/>
+      <ProgressBar completionStatus={50}/>
+      <ProgressBar completionStatus={75}/>
+      <ProgressBar completionStatus={100}/>
+      <ProgressBar completionStatus={150}/>
+      <ProgressBar completionStatus={-20}/>
+      <ProgressBar completionStatus={2}/>
     </div>
   )
 }

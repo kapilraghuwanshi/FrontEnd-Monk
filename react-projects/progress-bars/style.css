@@ -16,6 +16,8 @@ body {
     background-color: rgba(10, 72, 187, 0.763);
     border-radius: 8px;
     overflow: hidden;
+    text-align: center;
+    color:white;
     transition-duration: 4000ms;
     transition-timing-function: ease-in-out;
 }
