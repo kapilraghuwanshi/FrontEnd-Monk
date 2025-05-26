@@ -1,0 +1,21 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.bar {
+    height: 20px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 8px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: rgba(10, 72, 187, 0.763);
+    border-radius: 8px;
+    overflow: hidden;
+    transition-duration: 4000ms;
+    transition-timing-function: ease-in-out;
+}
