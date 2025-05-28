@@ -25,20 +25,88 @@ import ProgressBar from './ProgressBar'
 // Add: Appends a new progress bar to the bottom of the list.
 // Reset: Resets to the initial state where there is only one empty bar and stops any 
 // running animation
+const CONCURRENCY_LIMIT = 3;
+const INITIAL_PROGRESSION = [0]; // single bar with 0 progress
 
 export default function App() {
+  const [progression, setProgression] = useState(INITIAL_PROGRESSION);
+  // [50, 40, 90, 100, 0, 80]
+  const [timerId, setTimerId] = useState(null);
+
+  // Assume 60 Hz monitor = 60 FPS = 60 frames/images per second = 60 per 1000ms = 16.66 ms
+  // atleast less than 16 ms interval me update the progress bar = smooth animation
+  // requestAnimationFrame - auto match monitor FPS
+  const start = () => {
+    const timer = window.setInterval(() => {
+      setProgression((currProgression) => {
+        // finding out the no of non full bars 
+        const nonFullBars = currProgression
+          .map((value, index) => ({ value, index }))
+          .filter(({ value }) => value < 100);
+
+        // if all already full then nothing to do
+        if (nonFullBars.length === 0) {
+          return currProgression;
+        }
+        // pick concurrent ones from non full bars 
+        const barsToIncrement = nonFullBars.slice(0, CONCURRENCY_LIMIT);
+
+        // just a copy of currProgression - avoid mutations
+        const newProgression = currProgression.slice();
+
+        for (const { index } of barsToIncrement) {
+          newProgression[index] = newProgression[index] + 0.5;
+          // 2000ms - 0 to 100 = total time/interval time 
+          // 2000 ms/10 ms = 200 steps in 100 = 0.5
+          // Assume: 4000 ms / 15 ms = 266 steps in 100 = 0.37
+        }
+        return newProgression;
+      });
+    }, 10);
+
+    setTimerId(timer);
+  }
+
+  const pause = () => {
+    window.clearInterval(timerId);
+    setTimerId(null);
+  }
+
+  const reset = () => {
+    pause();
+    setProgression(INITIAL_PROGRESSION);
+  }
+
+  const addBars = () => {
+    setProgression(progression.concat(0))
+  }
+
+  const isProgressing = timerId !== null;
+
 
   return (
     <div>
       <h1>Progress Bars</h1>
-      <ProgressBar />
-      <ProgressBar completionStatus={25}/>
-      <ProgressBar completionStatus={50}/>
-      <ProgressBar completionStatus={75}/>
-      <ProgressBar completionStatus={100}/>
-      <ProgressBar completionStatus={150}/>
-      <ProgressBar completionStatus={-20}/>
-      <ProgressBar completionStatus={2}/>
+      <div className='buttons'>
+        <button onClick={() => { addBars(); }}>
+          Add
+        </button>
+        <button onClick={() => { isProgressing ? pause() : start() }}>
+          {isProgressing ? "Pause" : "Start"}
+        </button>
+        <button onClick={() => { reset(); }}>
+          Reset
+        </button>
+      </div>
+      <div>
+        {progression
+          .map((value, idx) =>
+            <ProgressBar
+              key={idx}
+              animationProgress={value}
+            />
+          )}
+      </div>
     </div>
   )
 }
