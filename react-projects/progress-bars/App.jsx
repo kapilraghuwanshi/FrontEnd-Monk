@@ -27,6 +27,8 @@ import ProgressBar from './ProgressBar'
 // running animation
 const CONCURRENCY_LIMIT = 3;
 const INITIAL_PROGRESSION = [0]; // single bar with 0 progress
+const ANIMATION_INTERVAL = 10; // ms
+const PROGRESS_INCREMENT = 0.5;
 
 export default function App() {
   const [progression, setProgression] = useState(INITIAL_PROGRESSION);
@@ -55,14 +57,14 @@ export default function App() {
         const newProgression = currProgression.slice();
 
         for (const { index } of barsToIncrement) {
-          newProgression[index] = newProgression[index] + 0.5;
+          newProgression[index] = newProgression[index] + PROGRESS_INCREMENT;
           // 2000ms - 0 to 100 = total time/interval time 
           // 2000 ms/10 ms = 200 steps in 100 = 0.5
           // Assume: 4000 ms / 15 ms = 266 steps in 100 = 0.37
         }
         return newProgression;
       });
-    }, 10);
+    }, ANIMATION_INTERVAL);
 
     setTimerId(timer);
   }
@@ -85,9 +87,9 @@ export default function App() {
 
 
   return (
-    <div>
+    <main>
       <h1>Progress Bars</h1>
-      <div className='buttons'>
+      <header className='buttons'>
         <button onClick={() => { addBars(); }}>
           Add
         </button>
@@ -97,8 +99,8 @@ export default function App() {
         <button onClick={() => { reset(); }}>
           Reset
         </button>
-      </div>
-      <div>
+      </header>
+      <section>
         {progression
           .map((value, idx) =>
             <ProgressBar
@@ -106,7 +108,7 @@ export default function App() {
               animationProgress={value}
             />
           )}
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }
